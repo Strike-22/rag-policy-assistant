@@ -102,12 +102,19 @@ Q: How many sick leave days do employees get?
 A: Employees receive 10 sick leave days per calendar year.
 
 Q: What is the remote work policy?
-A: Employees may work remotely up to 2 days per week with manager approval.
+A: The Remote Work and Hybrid Work Policy (IT-002, v1.4) 
+   sets requirements for employees working outside the office. 
+   Remote/hybrid work may be approved for eligible roles but 
+   does not grant an automatic right. Company may suspend 
+   remote work for operational or compliance reasons.
 
 Q: What happens if company equipment is lost or stolen?
 A: Report immediately to IT and file a police report if stolen. Employee may be liable for replacement cost.
 
 Q: What is the capital of France?
+A: I don't have that information.
+
+Q: What about increment?
 A: I don't have that information.
 ```
 
