@@ -1,0 +1,245 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "D:\\AI enginear\\python\\rag_project\\.archify\\architecture-rag-pipeline-20261021-143000\\candidate.json",
+    "sha256": "975b05595d12d8eeb4db10b334a41a6cd9dd6d6986787180f71507aa81308020",
+    "bytes": 5135
+  },
+  "artifact": {
+    "path": "D:\\AI enginear\\python\\rag_project\\.archify\\architecture-rag-pipeline-20261021-143000\\rag-pipeline.architecture.html",
+    "sha256": "fd8e55f5052f0fcc9fea2fbe4943ff446423e8280b4a1248b6dbc18b62f9f7cb",
+    "bytes": 777872
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "D:\\AI enginear\\python\\rag_project\\.archify\\architecture-rag-pipeline-20261021-143000\\rag-pipeline.architecture.finalize.json",
+    "summaryReceipt": "D:\\AI enginear\\python\\rag_project\\.archify\\architecture-rag-pipeline-20261021-143000\\rag-pipeline.architecture.finalize-summary.json",
+    "browserCheckReceipt": "D:\\AI enginear\\python\\rag_project\\.archify\\architecture-rag-pipeline-20261021-143000\\rag-pipeline.architecture.browser-check.json"
+  },
+  "update": {
+    "status": "update_available",
+    "installedVersion": "3.0.1",
+    "availableVersion": "3.2.0",
+    "releaseNotes": "https://github.com/tt-a1i/archify/releases/tag/v3.2.0",
+    "severity": "normal",
+    "checkedAt": "2026-10-21T09:40:53.216Z",
+    "source": "cache",
+    "noticeRequired": true,
+    "noticeText": "Archify update: 3.0.1 → 3.2.0. A previous check at 2026-10-21T09:40:53.216Z found a newer release. Release notes: https://github.com/tt-a1i/archify/releases/tag/v3.2.0. The installed Skill has not changed; ask to snooze or ignore this reminder.",
+    "eventKey": "archify@sha256:70e210265c59f24dcbdf2a502ff671104b5454e7ee7d3554aecd86bad32384f5"
+  },
+  "visualReview": "not-requested",
+  "durationMs": 3203,
+  "visualReviewRecommendation": {
+    "action": "inspect-route-readability",
+    "signals": {
+      "resolvedCrossovers": 1,
+      "routesOverSuggestedBends": 7
+    },
+    "reason": "Automated gates passed, but crossings or detours still need perceptual review before claiming visual quality.",
+    "affectedRoutes": {
+      "crossings": [
+        {
+          "left": {
+            "id": "db-to-retrieve",
+            "from": "chromadb",
+            "to": "retrieve_chunks",
+            "label": "query_emb → top-2",
+            "collectionIndex": 9,
+            "artifactIndex": 10
+          },
+          "right": {
+            "id": "eval-to-user",
+            "from": "evaluate",
+            "to": "user",
+            "label": "score + summary",
+            "collectionIndex": 15,
+            "artifactIndex": 16
+          },
+          "point": [
+            1210,
+            577
+          ]
+        }
+      ],
+      "detours": [
+        {
+          "relationship": {
+            "id": "chunk-to-embed",
+            "from": "chunk_text",
+            "to": "embed_chunks",
+            "label": "chunks",
+            "collectionIndex": 3,
+            "artifactIndex": 4
+          },
+          "bends": 3,
+          "stretch": 1.111,
+          "directCorridorBlockers": [
+            {
+              "id": "embed_model",
+              "label": "Embedding Model",
+              "box": [
+                810,
+                50,
+                160,
+                60
+              ]
+            }
+          ]
+        },
+        {
+          "relationship": {
+            "id": "db-to-retrieve",
+            "from": "chromadb",
+            "to": "retrieve_chunks",
+            "label": "query_emb → top-2",
+            "collectionIndex": 9,
+            "artifactIndex": 10
+          },
+          "bends": 4,
+          "stretch": 1
+        },
+        {
+          "relationship": {
+            "id": "main-to-generate",
+            "from": "main_loop",
+            "to": "generate_answer",
+            "label": "question",
+            "collectionIndex": 11,
+            "artifactIndex": 12
+          },
+          "bends": 4,
+          "stretch": 1.169,
+          "directCorridorBlockers": [
+            {
+              "id": "retrieve_chunks",
+              "label": "retrieve_chunks()",
+              "box": [
+                400,
+                580,
+                150,
+                60
+              ]
+            }
+          ]
+        },
+        {
+          "relationship": {
+            "id": "generate-to-eval",
+            "from": "generate_answer",
+            "to": "evaluate",
+            "label": "answer",
+            "collectionIndex": 13,
+            "artifactIndex": 14
+          },
+          "bends": 4,
+          "stretch": 1.189,
+          "directCorridorBlockers": [
+            {
+              "id": "groq_api",
+              "label": "Groq API",
+              "box": [
+                900,
+                580,
+                140,
+                60
+              ]
+            }
+          ]
+        },
+        {
+          "relationship": {
+            "id": "main-to-eval",
+            "from": "main_loop",
+            "to": "evaluate",
+            "label": "question",
+            "collectionIndex": 14,
+            "artifactIndex": 15
+          },
+          "bends": 4,
+          "stretch": 1.075,
+          "directCorridorBlockers": [
+            {
+              "id": "retrieve_chunks",
+              "label": "retrieve_chunks()",
+              "box": [
+                400,
+                580,
+                150,
+                60
+              ]
+            },
+            {
+              "id": "generate_answer",
+              "label": "generate_answer()",
+              "box": [
+                650,
+                580,
+                140,
+                60
+              ]
+            },
+            {
+              "id": "groq_api",
+              "label": "Groq API",
+              "box": [
+                900,
+                580,
+                140,
+                60
+              ]
+            }
+          ]
+        },
+        {
+          "relationship": {
+            "id": "eval-to-user",
+            "from": "evaluate",
+            "to": "user",
+            "label": "score + summary",
+            "collectionIndex": 15,
+            "artifactIndex": 16
+          },
+          "bends": 3,
+          "stretch": 1
+        },
+        {
+          "relationship": {
+            "id": "main-to-user",
+            "from": "main_loop",
+            "to": "user",
+            "label": "EVAL SUMMARY",
+            "collectionIndex": 16,
+            "artifactIndex": 17
+          },
+          "bends": 3,
+          "stretch": 1.2
+        }
+      ],
+      "truncated": false
+    },
+    "hints": [
+      "chromadb → retrieve_chunks crosses evaluate → user: move the node of whichever is a branch, return, or second entrance to the other side of the main path, so that relationship runs through an empty corridor.",
+      "chromadb → retrieve_chunks needs 4 bends: move node chromadb or retrieve_chunks so they share a row or column with matching centers, or sit diagonally with a clear corner.",
+      "evaluate → user needs 3 bends: move node evaluate or user so they share a row or column with matching centers, or sit diagonally with a clear corner.",
+      "main_loop → user needs 3 bends: move node main_loop or user so they share a row or column with matching centers, or sit diagonally with a clear corner."
+    ],
+    "repair": "Trace these relationships at the desktop viewport. For Architecture, use references/architecture-layout-repair.md: reflow a blocked main path or tangled connected scene, and repair an isolated defect locally only when the surrounding composition is accepted. Preserve all semantic content and user-fixed geometry. Rerun finalize once after the edit."
+  }
+}

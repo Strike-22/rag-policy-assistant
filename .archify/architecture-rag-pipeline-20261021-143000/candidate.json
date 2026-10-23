@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "RAG Pipeline — Company Policy Chatbot",
+    "output": "rag-pipeline.architecture.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    { "id": "user", "type": "external", "label": "User", "sublabel": "asks policy questions", "pos": [100, 350], "size": [120, 60] },
+    { "id": "knowledge_dir", "type": "database", "label": "knowledge/", "sublabel": "PDF policy docs", "pos": [100, 50], "size": [120, 60] },
+    { "id": "load_pdfs", "type": "backend", "label": "load_pdfs()", "sublabel": "pypdf.PdfReader", "pos": [350, 50], "size": [140, 60] },
+    { "id": "chunk_text", "type": "backend", "label": "chunk_text()", "sublabel": "100w, 20w overlap", "pos": [580, 50], "size": [140, 60] },
+    { "id": "embed_model", "type": "backend", "label": "Embedding Model", "sublabel": "BAAI/bge-small-en-v1.5", "pos": [810, 50], "size": [160, 60] },
+    { "id": "embed_chunks", "type": "backend", "label": "embed_chunks()", "sublabel": "batch → (N,384)", "pos": [1060, 50], "size": [140, 60] },
+    { "id": "store_in_chromadb", "type": "backend", "label": "store_in_chromadb()", "sublabel": "upsert + dedupe", "pos": [1290, 50], "size": [140, 60] },
+    { "id": "chromadb", "type": "database", "label": "ChromaDB", "sublabel": "./chroma_db (HNSW)", "pos": [1520, 50], "size": [140, 60] },
+    { "id": "main_loop", "type": "backend", "label": "main() Orchestrator", "sublabel": "ingestion → query loop", "pos": [100, 580], "size": [160, 60] },
+    { "id": "retrieve_chunks", "type": "backend", "label": "retrieve_chunks()", "sublabel": "embed Q → ANN top-2", "pos": [400, 580], "size": [150, 60] },
+    { "id": "generate_answer", "type": "backend", "label": "generate_answer()", "sublabel": "strict RAG prompt", "pos": [650, 580], "size": [140, 60] },
+    { "id": "groq_api", "type": "external", "label": "Groq API", "sublabel": "gpt-oss-20b, temp=0", "pos": [900, 580], "size": [140, 60] },
+    { "id": "evaluate", "type": "backend", "label": "evaluate()", "sublabel": "human scoring", "pos": [1140, 580], "size": [140, 60] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Ingestion Pipeline (runs once at startup)", "wraps": ["load_pdfs", "chunk_text", "embed_model", "embed_chunks"] },
+    { "kind": "region", "label": "Vector Storage", "wraps": ["store_in_chromadb", "chromadb"] },
+    { "kind": "region", "label": "Query Pipeline (per question)", "wraps": ["retrieve_chunks", "generate_answer"] },
+    { "kind": "region", "label": "Evaluation", "wraps": ["evaluate"] }
+  ],
+  "connections": [
+    { "id": "user-to-main", "from": "user", "to": "main_loop", "label": "questions[]", "labelAt": [160, 430] },
+    { "id": "knowledge-to-load", "from": "knowledge_dir", "to": "load_pdfs", "label": "*.pdf files" },
+    { "id": "load-to-chunk", "from": "load_pdfs", "to": "chunk_text", "label": "full_text" },
+    { "id": "chunk-to-embed", "from": "chunk_text", "to": "embed_chunks", "label": "chunks" },
+    { "id": "model-to-embed", "from": "embed_model", "to": "embed_chunks", "label": "model" },
+    { "id": "embed-to-store", "from": "embed_chunks", "to": "store_in_chromadb", "label": "embeddings" },
+    { "id": "chunk-to-store", "from": "chunk_text", "to": "store_in_chromadb", "label": "chunks", "labelDy": 25 },
+    { "id": "store-to-db", "from": "store_in_chromadb", "to": "chromadb", "label": "upsert" },
+    { "id": "main-to-retrieve", "from": "main_loop", "to": "retrieve_chunks", "label": "question + embed_model", "labelAt": [250, 670] },
+    { "id": "db-to-retrieve", "from": "chromadb", "to": "retrieve_chunks", "label": "query_emb → top-2", "labelAt": [1200, 250] },
+    { "id": "retrieve-to-generate", "from": "retrieve_chunks", "to": "generate_answer", "label": "chunks" },
+    { "id": "main-to-generate", "from": "main_loop", "to": "generate_answer", "label": "question", "labelAt": [380, 670] },
+    { "id": "groq-to-generate", "from": "groq_api", "to": "generate_answer", "label": "chat.completions", "labelAt": [780, 670] },
+    { "id": "generate-to-eval", "from": "generate_answer", "to": "evaluate", "label": "answer" },
+    { "id": "main-to-eval", "from": "main_loop", "to": "evaluate", "label": "question", "labelAt": [750, 670] },
+    { "id": "eval-to-user", "from": "evaluate", "to": "user", "label": "score + summary", "labelAt": [850, 450] },
+    { "id": "main-to-user", "from": "main_loop", "to": "user", "label": "EVAL SUMMARY", "labelAt": [160, 300] }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "Ingestion (Offline)", "items": ["load_pdfs: pypdf extracts text from PDFs", "chunk_text: sliding window 100w/20w overlap", "embed_chunks: BGE-small 384-dim vectors", "store_in_chromadb: HNSW index, persistent"] },
+    { "dot": "cyan", "title": "Query Path (Online)", "items": ["retrieve_chunks: embed question → ANN search", "generate_answer: strict RAG prompt, temp=0", "Groq API: gpt-oss-20b inference"] },
+    { "dot": "rose", "title": "Quality & Storage", "items": ["evaluate: human good/bad/hallucinated", "ChromaDB: SQLite + HNSW on disk", "main(): orchestrates full pipeline"] }
+  ]
+}

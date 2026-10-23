@@ -182,7 +182,8 @@ if __name__ == "__main__":
         "How many sick leave days do employees get?",
         "What is the remote work policy?",
         "What happens if company equipment is lost or stolen?",
-        "What is the capital of France?"
+        "What is the capital of France?",
+        "What about increment?"
     ]
     
     results = []
@@ -199,4 +200,4 @@ if __name__ == "__main__":
     print("="*50)   
     for r in results:
         print(f"Q: {r['question']}")
-        print(f"Score: {r['score']}\n") 
+        print(f"Score: {r['score']}\n")          
